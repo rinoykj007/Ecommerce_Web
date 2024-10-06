@@ -1,12 +1,12 @@
-"use client";
+'use client'
 
-import React, { useState, useMemo, useEffect } from "react";
-import logo from "../public/next.svg";
+import React, { useState, useMemo, useEffect } from "react"
 import {
   FaHeart,
   FaInstagram,
   FaFacebookF,
   FaTwitter,
+  FaLinkedinIn,
   FaShoppingBag,
   FaStar,
   FaChevronDown,
@@ -19,19 +19,19 @@ import {
   FaBed,
   FaUtensils,
   FaDesktop,
-} from "react-icons/fa";
-import { useSpring, animated, config } from "react-spring";
-import Image from "next/image";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent } from "@/components/ui/card";
+} from "react-icons/fa"
+import { useSpring, animated, config } from "react-spring"
+import Image from "next/image"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Card, CardContent } from "@/components/ui/card"
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { FloatingWhatsApp } from "react-floating-whatsapp";
+} from "@/components/ui/dropdown-menu"
+import { FloatingWhatsApp } from 'react-floating-whatsapp'
 
 const colors = {
   primary: "#3A506B",
@@ -39,37 +39,37 @@ const colors = {
   accent: "#FFA500",
   background: "#F0F4F8",
   text: "#1C2541",
-};
+}
 
 type Product = {
-  id: number;
-  name: string;
-  price: number;
-  rating: number;
-  image: string;
-  category: string;
-};
+  id: number
+  name: string
+  price: number
+  rating: number
+  image: string
+  category: string
+}
 
-type CartItem = Product & { quantity: number };
+type CartItem = Product & { quantity: number }
 
 type Category = {
-  id: number;
-  name: string;
-  icon: React.ComponentType;
-  subcategories: string[];
-};
+  id: number
+  name: string
+  icon: React.ComponentType
+  subcategories: string[]
+}
 
 export default function FurnitureHaven() {
-  const [cart, setCart] = useState<CartItem[]>([]);
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [activeView, setActiveView] = useState("home");
-  const [searchTerm, setSearchTerm] = useState("");
-  const [activeCategory, setActiveCategory] = useState("All");
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [adminUsername, setAdminUsername] = useState("");
-  const [adminPassword, setAdminPassword] = useState("");
-  const [activeSubMenu, setActiveSubMenu] = useState<number | null>(null);
-  const [adminView, setAdminView] = useState("dashboard");
+  const [cart, setCart] = useState<CartItem[]>([])
+  const [isAdmin, setIsAdmin] = useState(false)
+  const [activeView, setActiveView] = useState("home")
+  const [searchTerm, setSearchTerm] = useState("")
+  const [activeCategory, setActiveCategory] = useState("All")
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [adminUsername, setAdminUsername] = useState("")
+  const [adminPassword, setAdminPassword] = useState("")
+  const [activeSubMenu, setActiveSubMenu] = useState<number | null>(null)
+  const [adminView, setAdminView] = useState("dashboard")
   const [categories, setCategories] = useState<Category[]>([
     {
       id: 1,
@@ -95,35 +95,28 @@ export default function FurnitureHaven() {
       icon: FaDesktop,
       subcategories: ["Desks", "Office Chairs", "Bookcases"],
     },
-  ]);
-  const [newCategory, setNewCategory] = useState<Omit<Category, "id">>({
-    name: "",
-    icon: FaCouch,
-    subcategories: [],
-  });
-  const [editingCategory, setEditingCategory] = useState<Category | null>(null);
-  const [products, setProducts] = useState<Product[]>([]);
-  const [newProduct, setNewProduct] = useState<Omit<Product, "id" | "rating">>({
+  ])
+  const [newCategory, setNewCategory] = useState<Omit<Category, 'id'>>({ name: "", icon: FaCouch, subcategories: [] })
+  const [editingCategory, setEditingCategory] = useState<Category | null>(null)
+  const [products, setProducts] = useState<Product[]>([])
+  const [newProduct, setNewProduct] = useState<Omit<Product, 'id' | 'rating'>>({
     name: "",
     price: 0,
     category: "",
     image: "",
-  });
-  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  })
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null)
   const [profile, setProfile] = useState({
     name: "Admin User",
     email: "admin@furniturehaven.com",
     role: "Super Admin",
-  });
+  })
 
   const mainNavigation = [
     { name: "Home", view: "home" },
     {
       name: "Shop",
-      submenu: categories.map((cat) => ({
-        name: cat.name,
-        view: cat.name.toLowerCase().replace(" ", "-"),
-      })),
+      submenu: categories.map(cat => ({ name: cat.name, view: cat.name.toLowerCase().replace(" ", "-") })),
     },
     {
       name: "Categories",
@@ -145,39 +138,37 @@ export default function FurnitureHaven() {
     },
     { name: "About Us", view: "about" },
     { name: "Contact Us", view: "contact" },
-  ];
+  ]
 
   useEffect(() => {
-    const savedCart = localStorage.getItem("cart");
+    const savedCart = localStorage.getItem("cart")
     if (savedCart) {
-      setCart(JSON.parse(savedCart));
+      setCart(JSON.parse(savedCart))
     }
-  }, []);
+  }, [])
 
   useEffect(() => {
-    localStorage.setItem("cart", JSON.stringify(cart));
-  }, [cart]);
+    localStorage.setItem("cart", JSON.stringify(cart))
+  }, [cart])
 
   useEffect(() => {
     // Initialize products
     const initialProducts = categories.flatMap((category, categoryIndex) =>
-      Array(20)
-        .fill(null)
-        .map((_, index) => ({
-          id: categoryIndex * 20 + index + 1,
-          name: `${category.name} Item ${index + 1}`,
-          price: 100 + categoryIndex * 50 + index * 10,
-          rating: 4 + Math.random(),
-          image: getUniqueImage(category.name, index),
-          category: category.name,
-        }))
-    );
-    setProducts(initialProducts);
-  }, [categories]);
+      Array(20).fill(null).map((_, index) => ({
+        id: categoryIndex * 20 + index + 1,
+        name: `${category.name} Item ${index + 1}`,
+        price: 100 + (categoryIndex * 50) + (index * 10),
+        rating: 4 + Math.random(),
+        image: getUniqueImage(category.name, index),
+        category: category.name,
+      }))
+    )
+    setProducts(initialProducts)
+  }, [])
 
   function getUniqueImage(category: string, index: number) {
-    const colors = ["3A506B", "5BC0BE", "FFA500", "1C2541"];
-    const color = colors[index % colors.length];
+    const colors = ["3A506B", "5BC0BE", "FFA500", "1C2541"]
+    const color = colors[index % colors.length]
     const icon =
       category === "Living Room"
         ? "couch"
@@ -185,153 +176,333 @@ export default function FurnitureHaven() {
         ? "bed"
         : category === "Dining Room"
         ? "utensils"
-        : "desktop";
-    return `/placeholder.svg?height=200&width=200&text=${icon}&bg=${color}&fg=ffffff`;
+        : "desktop"
+    return `/placeholder.svg?height=200&width=200&text=${icon}&bg=${color}&fg=ffffff`
   }
 
   const fadeIn = useSpring({
     opacity: 1,
     from: { opacity: 0 },
     config: config.molasses,
-  });
+  })
 
   const mobileMenuAnimation = useSpring({
     opacity: isMobileMenuOpen ? 1 : 0,
     transform: isMobileMenuOpen ? "translateY(0%)" : "translateY(-100%)",
     config: config.gentle,
-  });
+  })
 
   const backgroundAnimation = useSpring({
     from: { backgroundPosition: "0% 50%" },
     to: { backgroundPosition: "100% 50%" },
     config: { duration: 20000 },
     loop: true,
-  });
+  })
 
   const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen);
-  };
+    setIsMobileMenuOpen(!isMobileMenuOpen)
+  }
 
   const buyProduct = (productId: number) => {
-    const productToAdd = products.find((p) => p.id === productId);
+    const productToAdd = products.find((p) => p.id === productId)
     if (productToAdd) {
       setCart((prevCart) => {
-        const existingItem = prevCart.find((item) => item.id === productId);
+        const existingItem = prevCart.find((item) => item.id === productId)
         if (existingItem) {
           return prevCart.map((item) =>
             item.id === productId
               ? { ...item, quantity: item.quantity + 1 }
               : item
-          );
+          )
         } else {
-          return [...prevCart, { ...productToAdd, quantity: 1 }];
+          return [...prevCart, { ...productToAdd, quantity: 1 }]
         }
-      });
+      })
     }
-  };
+  }
 
   const removeFromCart = (productId: number) => {
-    setCart((prevCart) => prevCart.filter((item) => item.id !== productId));
-  };
+    setCart((prevCart) => prevCart.filter((item) => item.id !== productId))
+  }
 
   const updateCartItemQuantity = (productId: number, newQuantity: number) => {
     setCart((prevCart) =>
       prevCart.map((item) =>
         item.id === productId ? { ...item, quantity: newQuantity } : item
       )
-    );
-  };
+    )
+  }
 
   const filteredProducts = useMemo(() => {
     return products.filter(
       (product) =>
         (activeCategory === "All" || product.category === activeCategory) &&
         product.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  }, [products, activeCategory, searchTerm]);
+    )
+  }, [products, activeCategory, searchTerm])
 
   const handleAdminLogin = (e: React.FormEvent) => {
-    e.preventDefault();
+    e.preventDefault()
     if (adminUsername === "admin" && adminPassword === "password") {
-      setIsAdmin(true);
-      setActiveView("admin");
+      setIsAdmin(true)
+      setActiveView("admin")
     } else {
-      alert("Invalid credentials");
+      alert("Invalid credentials")
     }
-  };
+  }
 
   const handleLogout = () => {
-    setIsAdmin(false);
-    setActiveView("home");
-  };
+    setIsAdmin(false)
+    setActiveView("home")
+  }
 
   const handleAddCategory = (e: React.FormEvent) => {
-    e.preventDefault();
+    e.preventDefault()
     setCategories([
       ...categories,
       { ...newCategory, id: categories.length + 1 },
-    ]);
-    setNewCategory({ name: "", icon: FaCouch, subcategories: [] });
-  };
+    ])
+    setNewCategory({ name: "", icon: FaCouch, subcategories: [] })
+  }
 
   const handleUpdateCategory = (e: React.FormEvent) => {
-    e.preventDefault();
+    e.preventDefault()
     if (editingCategory) {
       setCategories(
         categories.map((cat) =>
           cat.id === editingCategory.id ? editingCategory : cat
         )
-      );
-      setEditingCategory(null);
+      )
+      setEditingCategory(null)
     }
-  };
+  }
 
   const handleDeleteCategory = (id: number) => {
-    setCategories(categories.filter((cat) => cat.id !== id));
-  };
+    setCategories(categories.filter((cat) => cat.id !== id))
+  }
 
   const handleAddProduct = (e: React.FormEvent) => {
-    e.preventDefault();
-    setProducts([
-      ...products,
-      { ...newProduct, id: products.length + 1, rating: 5 },
-    ]);
-    setNewProduct({ name: "", price: 0, category: "", image: "" });
-  };
+    e.preventDefault()
+    setProducts([...products, { ...newProduct, id: products.length + 1, rating: 5 }])
+    setNewProduct({ name: "", price: 0, category: "", image: "" })
+  }
 
   const handleUpdateProduct = (e: React.FormEvent) => {
-    e.preventDefault();
+    e.preventDefault()
     if (editingProduct) {
       setProducts(
         products.map((prod) =>
           prod.id === editingProduct.id ? editingProduct : prod
         )
-      );
-      setEditingProduct(null);
+      )
+      setEditingProduct(null)
     }
-  };
+  }
 
   const handleDeleteProduct = (id: number) => {
-    setProducts(products.filter((prod) => prod.id !== id));
-  };
+    setProducts(products.filter((prod) => prod.id !== id))
+  }
 
   const handleUpdateProfile = (e: React.FormEvent) => {
-    e.preventDefault();
-    alert("Profile updated successfully!");
-  };
+    e.preventDefault()
+    alert("Profile updated successfully!")
+  }
 
   const handleNavigation = (view: string) => {
-    setActiveView(view);
+    setActiveView(view)
     if (view.includes("room") || view === "office") {
-      setActiveCategory(
-        view
-          .split("-")
-          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-          .join(" ")
-      );
+      setActiveCategory(view.split("-").map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" "))
     }
-    setIsMobileMenuOpen(false);
-  };
+    setIsMobileMenuOpen(false)
+  }
+
+  const Navbar = () => (
+    <nav className="bg-white shadow-md">
+      <div className="container mx-auto px-4">
+        <div className="flex justify-between items-center py-4">
+          <div className="flex items-center">
+            <h1 className="text-2xl font-bold text-primary mr-8 flex items-center">
+              <Image
+                src="/placeholder.svg?height=40&width=40&text=Logo"
+                alt="Furniture Haven Logo"
+                width={40}
+                height={40}
+                className="mr-2"
+              />
+              Furniture Haven
+            </h1>
+            <div className="hidden lg:flex space-x-4 flex items-center">
+              {mainNavigation.map((item, index) => (
+                <div
+                  key={index}
+                  className="relative"
+                >
+                  {!item.submenu ? (
+                    <Button
+                      variant="ghost"
+                      onClick={() => handleNavigation(item.view)}
+                      className="text-text hover:text-primary transition-colors duration-200 py-2 px-3"
+                    >
+                      {item.name}
+                    </Button>
+                  ) : (
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="text-text hover:text-primary transition-colors duration-200 py-2 px-3 flex items-center">
+                          {item.name} <FaChevronDown className="ml-1" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent>
+                        {item.submenu.map((subItem, subIndex) => (
+                          <DropdownMenuItem 
+                            key={subIndex}
+                            onSelect={() => handleNavigation(subItem.view)}
+                          >
+                            {subItem.name}
+                          </DropdownMenuItem>
+                        ))}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="flex items-center space-x-4">
+            {/* Social Media Icons */}
+            <div className="hidden md:flex items-center space-x-2">
+              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-secondary transition-colors duration-200">
+                <FaFacebookF size={18} />
+                <span className="sr-only">Facebook</span>
+              </a>
+              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-secondary transition-colors duration-200">
+                <FaTwitter size={18} />
+                <span className="sr-only">Twitter</span>
+              </a>
+              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-secondary transition-colors duration-200">
+                <FaInstagram size={18} />
+                <span className="sr-only">Instagram</span>
+              </a>
+              <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-secondary transition-colors duration-200">
+                <FaLinkedinIn size={18} />
+                <span className="sr-only">LinkedIn</span>
+              </a>
+            </div>
+            <Button variant="ghost" onClick={() => handleNavigation("cart")}>
+              <FaShoppingBag className="text-2xl text-primary" />
+              <span className="ml-1">{cart.reduce((sum, item) => sum + item.quantity, 0)}</span>
+            </Button>
+            {isAdmin ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost">
+                    <FaUser className="text-primary" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuItem onSelect={() => setActiveView("admin")}>
+                    <FaCog className="mr-2" />
+                    Admin Dashboard
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onSelect={handleLogout}>
+                    <FaSignOutAlt className="mr-2" />
+                    Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Button
+                variant="ghost"
+                onClick={() => setActiveView("admin")}
+                className="bg-gradient-to-r from-primary to-secondary px-4 py-2 rounded-full transition-all duration-300 hover:from-secondary hover:to-primary"
+              >
+                Admin Login
+              </Button>
+            )}
+            <Button
+              variant="ghost"
+              onClick={toggleMobileMenu}
+              className="lg:hidden text-primary"
+              aria-label="Toggle mobile menu"
+            >
+              <FaBars size={24} />
+            </Button>
+          </div>
+        </div>
+      </div>
+      {isMobileMenuOpen && (
+        <animated.div
+          style={mobileMenuAnimation}
+          className="lg:hidden bg-white shadow-md"
+        >
+          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+            {mainNavigation.map((item, index) => (
+              <div key={index}>
+                {!item.submenu ? (
+                  <Button
+                    variant="ghost"
+                    onClick={() => handleNavigation(item.view)}
+                    className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-text hover:text-primary hover:bg-background"
+                  >
+                    {item.name}
+                  </Button>
+                ) : (
+                  <div>
+                    <button
+                      onClick={() =>
+                        setActiveSubMenu(activeSubMenu === index ? null : index)
+                      }
+                      className="flex justify-between items-center w-full px-3 py-2 rounded-md text-base font-medium text-text hover:text-primary hover:bg-background"
+                    >
+                      {item.name}
+                      <FaChevronDown
+                        className={`ml-2 transform transition-transform duration-200 ${
+                          activeSubMenu === index ? "rotate-180" : ""
+                        }`}
+                      />
+                    </button>
+                    {activeSubMenu === index && (
+                      <div className="pl-4">
+                        {item.submenu.map((subItem, subIndex) => (
+                          <Button
+                            key={subIndex}
+                            variant="ghost"
+                            onClick={() => handleNavigation(subItem.view)}
+                            className="block w-full text-left px-3 py-2 rounded-md text-sm text-text hover:text-primary hover:bg-background"
+                          >
+                            {subItem.name}
+                          </Button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            ))}
+            {/* Social Media Icons for Mobile */}
+            <div className="flex justify-center space-x-4 mt-4">
+              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-secondary transition-colors duration-200">
+                <FaFacebookF size={20} />
+                <span className="sr-only">Facebook</span>
+              </a>
+              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-secondary transition-colors duration-200">
+                <FaTwitter size={20} />
+                <span className="sr-only">Twitter</span>
+              </a>
+              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-secondary transition-colors duration-200">
+                <FaInstagram size={20} />
+                <span className="sr-only">Instagram</span>
+              </a>
+              <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-secondary transition-colors duration-200">
+                <FaLinkedinIn size={20} />
+                <span className="sr-only">LinkedIn</span>
+              </a>
+            </div>
+          </div>
+        </animated.div>
+      )}
+    </nav>
+  )
 
   const LandingPage = () => (
     <animated.div style={fadeIn} className="min-h-screen text-white">
@@ -358,10 +529,7 @@ export default function FurnitureHaven() {
           </Button>
           <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8">
             {categories.slice(0, 3).map((category) => (
-              <Card
-                key={category.id}
-                className="bg-white bg-opacity-20 backdrop-blur-md"
-              >
+              <Card key={category.id} className="bg-white bg-opacity-20 backdrop-blur-md">
                 <CardContent className="p-6">
                   <category.icon className="text-4xl mb-4 text-accent" />
                   <h2 className="text-2xl font-semibold mb-2 text-primary">
@@ -372,8 +540,8 @@ export default function FurnitureHaven() {
                   </p>
                   <Button
                     onClick={() => {
-                      setActiveView("products");
-                      setActiveCategory(category.name);
+                      setActiveView("products")
+                      setActiveCategory(category.name)
                     }}
                     className="bg-secondary text-black px-4 py-2 rounded-full text-sm font-semibold hover:bg-opacity-90 transition-colors duration-300"
                   >
@@ -386,163 +554,7 @@ export default function FurnitureHaven() {
         </div>
       </animated.div>
     </animated.div>
-  );
-
-  const Navbar = () => {
-    return (
-      // Ensure you have a return statement
-      <nav className="bg-white shadow-md">
-        <div className="container mx-auto px-4">
-          <div className="flex justify-between items-center py-4">
-            <div className="flex items-center">
-              <h1 className="text-2xl font-bold text-primary mr-8 flex items-center">
-                <Image
-                  src={logo}
-                  alt="Furniture Haven Logo"
-                  width={40}
-                  height={40}
-                  className="mr-2"
-                />
-              </h1>
-              <div className="hidden lg:flex space-x-4 flex items-center">
-                {mainNavigation.map((item, index) => (
-                  <div key={index} className="relative">
-                    {!item.submenu ? (
-                      <Button
-                        variant="ghost"
-                        onClick={() => handleNavigation(item.view)}
-                        className="text-text hover:text-primary transition-colors duration-200 py-2 px-3"
-                      >
-                        {item.name}
-                      </Button>
-                    ) : (
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            className="text-text hover:text-primary transition-colors duration-200 py-2 px-3 flex items-center"
-                          >
-                            {item.name} <FaChevronDown className="ml-1" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent>
-                          {item.submenu.map((subItem, subIndex) => (
-                            <DropdownMenuItem
-                              key={subIndex}
-                              onSelect={() => handleNavigation(subItem.view)}
-                            >
-                              {subItem.name}
-                            </DropdownMenuItem>
-                          ))}
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className="flex items-center space-x-4">
-              <Button variant="ghost" onClick={() => handleNavigation("cart")}>
-                <FaShoppingBag className="text-2xl text-primary" />
-                <span className="ml-1">
-                  {cart.reduce((sum, item) => sum + item.quantity, 0)}
-                </span>
-              </Button>
-              {isAdmin ? (
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost">
-                      <FaUser className="text-primary" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    <DropdownMenuItem onSelect={() => setActiveView("admin")}>
-                      <FaCog className="mr-2" />
-                      Admin Dashboard
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onSelect={handleLogout}>
-                      <FaSignOutAlt className="mr-2" />
-                      Logout
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              ) : (
-                <Button
-                  variant="ghost"
-                  onClick={() => setActiveView("admin")}
-                  className="bg-gradient-to-r from-primary to-secondary px-4 py-2 rounded-full transition-all duration-300 hover:from-secondary hover:to-primary"
-                >
-                  Admin Login
-                </Button>
-              )}
-              <Button
-                variant="ghost"
-                onClick={toggleMobileMenu}
-                className="lg:hidden text-primary"
-                aria-label="Toggle mobile menu"
-              >
-                <FaBars size={24} />
-              </Button>
-            </div>
-          </div>
-        </div>
-        {isMobileMenuOpen && (
-          <animated.div
-            style={mobileMenuAnimation}
-            className="lg:hidden bg-white shadow-md"
-          >
-            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-              {mainNavigation.map((item, index) => (
-                <div key={index}>
-                  {!item.submenu ? (
-                    <Button
-                      variant="ghost"
-                      onClick={() => handleNavigation(item.view)}
-                      className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-text hover:text-primary hover:bg-background"
-                    >
-                      {item.name}
-                    </Button>
-                  ) : (
-                    <div>
-                      <button
-                        onClick={() =>
-                          setActiveSubMenu(
-                            activeSubMenu === index ? null : index
-                          )
-                        }
-                        className="flex justify-between items-center w-full px-3 py-2 rounded-md text-base font-medium text-text hover:text-primary hover:bg-background"
-                      >
-                        {item.name}
-                        <FaChevronDown
-                          className={`ml-2 transform transition-transform duration-200 ${
-                            activeSubMenu === index ? "rotate-180" : ""
-                          }`}
-                        />
-                      </button>
-                      {activeSubMenu === index && (
-                        <div className="pl-4">
-                          {item.submenu.map((subItem, subIndex) => (
-                            <Button
-                              key={subIndex}
-                              variant="ghost"
-                              onClick={() => handleNavigation(subItem.view)}
-                              className="block w-full text-left px-3 py-2 rounded-md text-sm text-text hover:text-primary hover:bg-background"
-                            >
-                              {subItem.name}
-                            </Button>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </animated.div>
-        )}
-      </nav>
-    );
-  };
+  )
 
   const ProductsPage = () => (
     <div>
@@ -598,7 +610,7 @@ export default function FurnitureHaven() {
         )}
       </div>
     </div>
-  );
+  )
 
   const CartPage = () => (
     <Card className="max-w-2xl mx-auto">
@@ -627,7 +639,10 @@ export default function FurnitureHaven() {
                     min="1"
                     value={item.quantity}
                     onChange={(e) =>
-                      updateCartItemQuantity(item.id, parseInt(e.target.value))
+                      updateCartItemQuantity(
+                        item.id,
+                        parseInt(e.target.value)
+                      )
                     }
                     className="w-16 text-center"
                   />
@@ -644,7 +659,10 @@ export default function FurnitureHaven() {
               <p className="text-2xl font-bold text-primary">
                 Total: $
                 {cart
-                  .reduce((sum, item) => sum + item.price * item.quantity, 0)
+                  .reduce(
+                    (sum, item) => sum + item.price * item.quantity,
+                    0
+                  )
                   .toFixed(2)}
               </p>
               <Button className="mt-4 w-full bg-accent text-white">
@@ -655,31 +673,24 @@ export default function FurnitureHaven() {
         )}
       </CardContent>
     </Card>
-  );
+  )
 
   const AboutPage = () => (
     <Card className="max-w-2xl mx-auto">
       <CardContent className="p-8">
         <h2 className="text-3xl font-bold mb-6 text-primary">About Us</h2>
         <p className="text-text mb-4">
-          Furniture Haven is your one-stop shop for all your home furnishing
-          needs. We pride ourselves on offering a wide selection of high-quality
-          furniture at competitive prices.
+          Furniture Haven is your one-stop shop for all your home furnishing needs. We pride ourselves on offering a wide selection of high-quality furniture at competitive prices.
         </p>
         <p className="text-text mb-4">
-          Founded in 2010, we've been helping customers create their dream homes
-          for over a decade. Our team of expert designers and customer service
-          representatives are always ready to assist you in finding the perfect
-          pieces for your space.
+          Founded in 2010, we've been helping customers create their dream homes for over a decade. Our team of expert designers and customer service representatives are always ready to assist you in finding the perfect pieces for your space.
         </p>
         <p className="text-text">
-          At Furniture Haven, we believe that everyone deserves a beautiful and
-          comfortable home. That's why we're committed to providing excellent
-          products and service to all our customers.
+          At Furniture Haven, we believe that everyone deserves a beautiful and comfortable home. That's why we're committed to providing excellent products and service to all our customers.
         </p>
       </CardContent>
     </Card>
-  );
+  )
 
   const ContactPage = () => (
     <Card className="max-w-2xl mx-auto">
@@ -693,7 +704,11 @@ export default function FurnitureHaven() {
             >
               Name
             </label>
-            <Input type="text" id="name" name="name" />
+            <Input
+              type="text"
+              id="name"
+              name="name"
+            />
           </div>
           <div>
             <label
@@ -702,7 +717,11 @@ export default function FurnitureHaven() {
             >
               Email
             </label>
-            <Input type="email" id="email" name="email" />
+            <Input
+              type="email"
+              id="email"
+              name="email"
+            />
           </div>
           <div>
             <label
@@ -724,28 +743,22 @@ export default function FurnitureHaven() {
         </form>
       </CardContent>
     </Card>
-  );
+  )
 
   const AdminDashboard = () => (
     <div className="bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 p-8 rounded-lg shadow-md max-w-4xl mx-auto text-white">
       <h2 className="text-3xl font-bold mb-6">Admin Dashboard</h2>
       <div className="flex space-x-4 mb-6">
-        {["dashboard", "categories", "products", "profile", "reports"].map(
-          (view) => (
-            <Button
-              key={view}
-              onClick={() => setAdminView(view)}
-              variant={adminView === view ? "secondary" : "outline"}
-              className={
-                adminView === view
-                  ? "bg-white text-indigo-600"
-                  : "bg-transparent text-white border-white hover:bg-white hover:text-indigo-600"
-              }
-            >
-              {view.charAt(0).toUpperCase() + view.slice(1)}
-            </Button>
-          )
-        )}
+        {["dashboard", "categories", "products", "profile", "reports"].map((view) => (
+          <Button
+            key={view}
+            onClick={() => setAdminView(view)}
+            variant={adminView === view ? "secondary" : "outline"}
+            className={adminView === view ? "bg-white text-indigo-600" : "bg-transparent text-white border-white hover:bg-white hover:text-indigo-600"}
+          >
+            {view.charAt(0).toUpperCase() + view.slice(1)}
+          </Button>
+        ))}
       </div>
       {adminView === "dashboard" && (
         <div>
@@ -760,7 +773,9 @@ export default function FurnitureHaven() {
       )}
       {adminView === "categories" && (
         <div>
-          <h3 className="text-2xl font-semibold mb-4">Manage Categories</h3>
+          <h3 className="text-2xl font-semibold mb-4">
+            Manage Categories
+          </h3>
           <form onSubmit={handleAddCategory} className="mb-6">
             <Input
               type="text"
@@ -771,10 +786,7 @@ export default function FurnitureHaven() {
               placeholder="Category Name"
               className="mb-2 bg-white text-indigo-600"
             />
-            <Button
-              type="submit"
-              className="bg-white text-indigo-600 hover:bg-gray-200"
-            >
+            <Button type="submit" className="bg-white text-indigo-600 hover:bg-gray-200">
               Add Category
             </Button>
           </form>
@@ -787,7 +799,8 @@ export default function FurnitureHaven() {
                 <span>{category.name}</span>
                 <div>
                   <Button
-                    onClick={() => setEditingCategory(category)}
+                    onClick={() =>
+ setEditingCategory(category)}
                     variant="outline"
                     className="mr-2 border-white text-white hover:bg-white hover:text-indigo-600"
                   >
@@ -817,10 +830,7 @@ export default function FurnitureHaven() {
                 }
                 className="mb-2 bg-white text-indigo-600"
               />
-              <Button
-                type="submit"
-                className="bg-white text-indigo-600 hover:bg-gray-200"
-              >
+              <Button type="submit" className="bg-white text-indigo-600 hover:bg-gray-200">
                 Update Category
               </Button>
             </form>
@@ -829,7 +839,9 @@ export default function FurnitureHaven() {
       )}
       {adminView === "products" && (
         <div>
-          <h3 className="text-2xl font-semibold mb-4">Manage Products</h3>
+          <h3 className="text-2xl font-semibold mb-4">
+            Manage Products
+          </h3>
           <form onSubmit={handleAddProduct} className="mb-6">
             <Input
               type="text"
@@ -863,10 +875,7 @@ export default function FurnitureHaven() {
                 </option>
               ))}
             </select>
-            <Button
-              type="submit"
-              className="bg-white text-indigo-600 hover:bg-gray-200"
-            >
+            <Button type="submit" className="bg-white text-indigo-600 hover:bg-gray-200">
               Add Product
             </Button>
           </form>
@@ -935,10 +944,7 @@ export default function FurnitureHaven() {
                   </option>
                 ))}
               </select>
-              <Button
-                type="submit"
-                className="bg-white text-indigo-600 hover:bg-gray-200"
-              >
+              <Button type="submit" className="bg-white text-indigo-600 hover:bg-gray-200">
                 Update Product
               </Button>
             </form>
@@ -947,10 +953,12 @@ export default function FurnitureHaven() {
       )}
       {adminView === "profile" && (
         <div>
-          <h3 className="text-2xl font-semibold mb-4">Manage Profile</h3>
+          <h3 className="text-2xl font-semibold mb-4">
+            Manage Profile
+          </h3>
           <form onSubmit={handleUpdateProfile}>
             <div className="mb-4">
-              <label className="block text-gray-100 mb-2">Name</label>
+              <label className="block text-gray-200 mb-2">Name</label>
               <Input
                 type="text"
                 value={profile.name}
@@ -961,7 +969,7 @@ export default function FurnitureHaven() {
               />
             </div>
             <div className="mb-4">
-              <label className="block text-gray-100 mb-2">Email</label>
+              <label className="block text-gray-200 mb-2">Email</label>
               <Input
                 type="email"
                 value={profile.email}
@@ -972,7 +980,7 @@ export default function FurnitureHaven() {
               />
             </div>
             <div className="mb-4">
-              <label className="block text-gray-100 mb-2">Role</label>
+              <label className="block text-gray-200 mb-2">Role</label>
               <Input
                 type="text"
                 value={profile.role}
@@ -980,10 +988,7 @@ export default function FurnitureHaven() {
                 className="bg-gray-100 text-indigo-600"
               />
             </div>
-            <Button
-              type="submit"
-              className="bg-white text-indigo-600 hover:bg-gray-200"
-            >
+            <Button type="submit" className="bg-white text-indigo-600 hover:bg-gray-200">
               Update Profile
             </Button>
           </form>
@@ -991,7 +996,9 @@ export default function FurnitureHaven() {
       )}
       {adminView === "reports" && (
         <div>
-          <h3 className="text-2xl font-semibold mb-4">View Reports</h3>
+          <h3 className="text-2xl font-semibold mb-4">
+            View Reports
+          </h3>
           <div className="grid grid-cols-2 gap-4">
             <Card className="bg-white bg-opacity-20">
               <CardContent className="p-4">
@@ -1023,7 +1030,7 @@ export default function FurnitureHaven() {
         </div>
       )}
     </div>
-  );
+  )
 
   return (
     <div
@@ -1039,10 +1046,7 @@ export default function FurnitureHaven() {
           {activeView === "cart" && <CartPage />}
           {activeView === "about" && <AboutPage />}
           {activeView === "contact" && <ContactPage />}
-          {(activeView === "living-room" ||
-            activeView === "bedroom" ||
-            activeView === "dining-room" ||
-            activeView === "office") && <ProductsPage />}
+          {(activeView === "living-room" || activeView === "bedroom" || activeView === "dining-room" || activeView === "office") && <ProductsPage />}
           {activeView === "admin" && !isAdmin && (
             <Card className="max-w-md mx-auto">
               <CardContent className="p-8">
@@ -1121,18 +1125,16 @@ export default function FurnitureHaven() {
             <div>
               <h3 className="text-xl font-semibold mb-4">Customer Service</h3>
               <ul className="space-y-2">
-                {["FAQ", "Shipping", "Returns", "Privacy Policy"].map(
-                  (link) => (
-                    <li key={link}>
-                      <a
-                        href="#"
-                        className="text-sm text-gray-300 hover:text-white transition-colors duration-200"
-                      >
-                        {link}
-                      </a>
-                    </li>
-                  )
-                )}
+                {["FAQ", "Shipping", "Returns", "Privacy Policy"].map((link) => (
+                  <li key={link}>
+                    <a
+                      href="#"
+                      className="text-sm text-gray-300 hover:text-white transition-colors duration-200"
+                    >
+                      {link}
+                    </a>
+                  </li>
+                ))}
               </ul>
             </div>
             <div>
@@ -1165,5 +1167,5 @@ export default function FurnitureHaven() {
         placeholder="Type a message..."
       />
     </div>
-  );
+  )
 }
