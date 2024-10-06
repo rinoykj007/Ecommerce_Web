@@ -173,7 +173,7 @@ export default function FurnitureHaven() {
         }))
     );
     setProducts(initialProducts);
-  }, []);
+  }, [categories]);
 
   function getUniqueImage(category: string, index: number) {
     const colors = ["3A506B", "5BC0BE", "FFA500", "1C2541"];
